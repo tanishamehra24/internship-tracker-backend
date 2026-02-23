@@ -46,7 +46,7 @@ export const getSingleApplication = async (req, res) => {
       [id],
     );
 
-    res.status(200).json(result.rows); //response after executing query
+    res.status(200).json(result.rows[0]); //response after executing query
   } catch (error) {
     console.error("DB ERROR:", error);
     res.status(404).json({message: "Application not found"});
