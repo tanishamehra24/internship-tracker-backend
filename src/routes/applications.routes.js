@@ -2,6 +2,7 @@ import express from "express";
 import {
   deleteApplication,
   getAllApplications,
+  getSingleApplication,
   updateApplication,
   updateStatus,
 } from "../controllers/applications.controller.js"; //imported the function defined in the controllers
@@ -11,6 +12,8 @@ import {createApplication} from "../controllers/applications.controller.js";
 const router = express.Router(); //created a router
 
 router.get("/", getAllApplications); //get request to fetch the applications
+
+router.get("/:id", getSingleApplication); //get request to fetch the applications
 
 router.post("/", createApplication); //create a new application
 

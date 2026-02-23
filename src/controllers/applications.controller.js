@@ -25,6 +25,34 @@ export const getAllApplications = async (req, res) => {
   }
 };
 
+export const getSingleApplication = async (req, res) => {
+  const {id} = req.params;
+  try {
+    const result = await pool.query(
+      `
+      SELECT
+        internships.id,
+        company.company_name,
+        company.location,
+        internships.role,
+        internships.status,
+        internships.applied_date,
+        internships.link
+      FROM internships
+      JOIN company
+        ON internships.company_id = company.company_id
+      WHERE internships.id = $1;
+    `,
+      [id],
+    );
+
+    res.status(200).json(result.rows); //response after executing query
+  } catch (error) {
+    console.error("DB ERROR:", error);
+    res.status(404).json({message: "Application not found"});
+  }
+};
+
 export const createApplication = async (req, res) => {
   const {company_name, location, role, status, link} = req.body;
   try {
