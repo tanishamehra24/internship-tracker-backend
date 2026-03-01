@@ -15,8 +15,9 @@ export const getAllApplications = async (req, res) => {
       FROM internships
       JOIN company
         ON internships.company_id = company.company_id
+        WHERE internships.user_id = $1
       ORDER BY internships.applied_date DESC;
-    `);
+    `,[req.user.id]);
 
     res.status(200).json(result.rows); //response after executing query
   } catch (error) {
@@ -41,9 +42,9 @@ export const getSingleApplication = async (req, res) => {
       FROM internships
       JOIN company
         ON internships.company_id = company.company_id
-      WHERE internships.id = $1;
+      WHERE internships.id = $1 AND internships.user_id=$2;
     `,
-      [id],
+      [id, req.user.id],
     );
 
     res.status(200).json(result.rows[0]); //response after executing query
@@ -82,9 +83,9 @@ export const createApplication = async (req, res) => {
     //Insert new internship
     const newApplication = await pool.query(
       `
-      INSERT INTO internships (role, status, link, company_id) 
-      VALUES($1, $2, $3 , $4) RETURNING *`,
-      [role, status, link, companyId],
+      INSERT INTO internships (role, status, link, company_id,user_id) 
+      VALUES($1, $2, $3 , $4,$5) RETURNING *`,
+      [role, status, link, companyId, req.user.id],
     );
 
     res.status(201).json(newApplication.rows[0]);
@@ -98,11 +99,11 @@ export const deleteApplication = async (req, res) => {
   const {id} = req.params;
   try {
     const result = await pool.query(
-      `DELETE FROM internships WHERE id = $1 RETURNING *`,
-      [id],
+      `DELETE FROM internships WHERE id = $1 AND user_id = $2 RETURNING *`,
+      [id, req.user.id],
     );
 
-    if (result.rows[0] === 0) {
+    if (result.rows === 0) {
       return res.status(404).json({message: "Application not found!"});
     }
     res
@@ -127,9 +128,9 @@ export const updateApplication = async (req, res) => {
     const internshipResult = await client.query(
       `UPDATE internships
        SET role = $1, link = $2
-       WHERE id = $3
+       WHERE id = $3 AND user_id = $4
        RETURNING company_id`,
-      [role, link, id],
+      [role, link, id, req.user.id],
     );
 
     if (internshipResult.rows.length === 0) {
@@ -168,7 +169,7 @@ export const updateStatus = async (req, res) => {
 
   const normalizedStatus = status.toLowerCase();
 
-  const validStatus = ["applied", "interview", "rejected", "in-process"];
+  const validStatus = ["applied", "interview", "rejected", "offer"];
 
   if (!validStatus.includes(normalizedStatus)) {
     return res.status(400).json({message: "Invalid status value"});
@@ -176,8 +177,8 @@ export const updateStatus = async (req, res) => {
 
   try {
     const result = await pool.query(
-      `UPDATE internships SET status= $1 WHERE id=$2 RETURNING *`,
-      [status, id],
+      `UPDATE internships SET status= $1 WHERE id=$2 AND user_id = $3 RETURNING *`,
+      [status, id,req.user.id],
     );
 
     if (result.rowCount === 0) {

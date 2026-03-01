@@ -5,11 +5,13 @@ import {
   getSingleApplication,
   updateApplication,
   updateStatus,
+  createApplication,
 } from "../controllers/applications.controller.js"; //imported the function defined in the controllers
 
-import {createApplication} from "../controllers/applications.controller.js";
+import {protect} from "../middlewares/auth.middleware.js";
 
 const router = express.Router(); //created a router
+router.use(protect);
 
 router.get("/", getAllApplications); //get request to fetch the applications
 
