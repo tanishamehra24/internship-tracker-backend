@@ -5,7 +5,7 @@ dotenv.config();
 //created a connection pool
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false } // ✅ Required on Render
+  ssl: { rejectUnauthorized: false } 
 });
 
 pool
