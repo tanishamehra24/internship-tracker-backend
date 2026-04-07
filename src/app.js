@@ -6,7 +6,7 @@ import cors from "cors";
 const app = express();
 app.use(cors({
   origin: [
-    "https://interntrack-mu.vercel.app/", // 🔁 replace with your actual Vercel URL
+    "https://interntrack-mu.vercel.app/", 
     "http://localhost:5000",        // for local dev
   ],
   credentials: true,
@@ -14,8 +14,6 @@ app.use(cors({
   allowedHeaders: ["Content-Type", "Authorization"],
 }));
 
-// ✅ Handle preflight requests explicitly
-app.use(cors(corsOptions))
 app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/applications", applicationsRoutes); //mounting routes
