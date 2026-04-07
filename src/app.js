@@ -15,7 +15,7 @@ app.use(cors({
 }));
 
 // ✅ Handle preflight requests explicitly
-app.options("*", cors());
+app.use(cors(corsOptions))
 app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/applications", applicationsRoutes); //mounting routes
