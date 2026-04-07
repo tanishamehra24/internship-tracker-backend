@@ -4,11 +4,9 @@ import authRoutes from "./routes/auth.routes.js";
 import cors from "cors";
 
 const app = express();
+
 app.use(cors({
-  origin: [
-    "https://interntrack-mu.vercel.app/", 
-    "http://localhost:5000",        // for local dev
-  ],
+  origin: "https://interntrack-mu.vercel.app/",
   credentials: true,
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
